@@ -5,28 +5,80 @@
 local L = SUFGridLocals
 local SL = ShadowUFLocals
 local Grid = {}
-local AceDialgo, AceRegistry
+local AceDialgo, AceRegistry, playerClass
 ShadowUF:RegisterModule(Grid, "grid")
 
 function Grid:OnDefaultsSet()
-	ShadowUF.defaults.profile.units.raid.grid = {enabled = true, cursed = false, vertical = false,
+	ShadowUF.defaults.profile.units.raid.grid = {enabled = true, cursed = false, vertical = false, disabled = {},
 		indicators = {
-			--["tl"] = {enabled = true, name = "Top Left", anchorPoint = "TL", anchorTo = "$parent", height = 16, width = 16, alpha = 1.0, x = 4, y = -4},
+			["tl"] = {enabled = true, name = ShadowUFLocals["Top Left"], anchorPoint = "ITL", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 8, y = 3},
+			["tr"] = {enabled = true, name = ShadowUFLocals["Top Right"], anchorPoint = "ITR", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -5, y = 3},
+			["bl"] = {enabled = true, name = ShadowUFLocals["Bottom Left"], anchorPoint = "IBL", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 8, y = 5},
+			["br"] = {enabled = true, name = ShadowUFLocals["Bottom Right"], anchorPoint = "IBR", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -4, y = 4},
+			["c"] = {enabled = true, name = ShadowUFLocals["Center"], anchorPoint = "IC", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 0, y = 0},
+		},
+		linked = {
+			-- Shadow Protection -> Prayer of Shadow Protection
+			[GetSpellInfo(976)] = GetSpellInfo(27683),
+			-- Arcane Intelligent -> Arcane Brilliance
+			[GetSpellInfo(1459)] = GetSpellInfo(43002),
+			-- Dalaran Brilliance -> Arcane Brilliance
+			[GetSpellInfo(61316)] = GetSpellInfo(43002),
+			-- Mark of the Wild -> Gift of the Wild
+			[GetSpellInfo(1126)] = GetSpellInfo(21849),
+			-- Power Word: Fortitude -> Prayer of Fortitude
+			[GetSpellInfo(1243)] = GetSpellInfo(21562),
 		},
 		auras = {
-			--["Rejuvenation"] = {indicator = "tl", group = L["Druid"], duration = false, icon = false, player = false, missing = false, priority = 10, r = 0.66, g = 0.66, b = 1.0},
+			-- Rejuvenation
+			[GetSpellInfo(774)] = {indicator = "", group = L["Druid"], priority = 10, r = 0.66, g = 0.66, b = 1.0},
+			-- Regrowth
+			[GetSpellInfo(8936)] = {indicator = "", group = L["Druid"], priority = 10, r = 0.50, g = 1.0, b = 0.63},
+			-- Lifebloom
+			[GetSpellInfo(33763)] = {indicator = "", group = L["Druid"], priority = 10, r = 0.07, g = 1.0, b = 0.01},
+			-- Wild Growth
+			[GetSpellInfo(53248)] = {indicator = "", group = L["Druid"], priority = 10, r = 0.51, g = 0.72, b = 0.77},
+			-- Gift of the Wild
+			[GetSpellInfo(21849)] = {indicator = "", group = L["Druid"], priority = 10, r = 1.0, g = 0.33, b = 0.90},
+			-- Abolish Poison
+			[GetSpellInfo(2893)] = {indicator = "", group = L["Druid"], priority = 10, r = 0.40, g = 1.0, b = 0.45},
+			-- Renew
+			[GetSpellInfo(139)] = {indicator = "", group = L["Priest"], priority = 10, r = 1, g = 0.62, b = 0.88},
+			-- Power Word: Shield
+			[GetSpellInfo(17)] = {indicator = "", group = L["Priest"], priority = 10, r = 0.55, g = 0.69, b = 1.0},
+			-- Prayer of Fortitude
+			[GetSpellInfo(21562)] = {indicator = "", group = L["Priest"], priority = 10, r = 0.58, g = 1.0, b = 0.50},
+			-- Abolish Disease
+			[GetSpellInfo(552)] = {indicator = "", group = L["Priest"], priority = 10, r = 1.0, g = 0.79, b = 0.67},
+			-- Prayer of Shadow Protection
+			[GetSpellInfo(27683)] = {indicator = "", group = L["Priest"], priority = 10, r = 0.60, g = 0.18, b = 1.0},
+			-- Sacred Shield
+			[GetSpellInfo(53601)] = {indicator = "", group = L["Paladin"], priority = 10, r = 0.90, g = 1.0, b = 0.37},
+			-- Earth Shield
+			[GetSpellInfo(49284)] = {indicator = "", group = L["Shaman"], priority = 10, r = 0.26, g = 1.0, b = 0.26},
+			-- Riptide
+			[GetSpellInfo(61301)] = {indicator = "", group = L["Shaman"], priority = 10, r = 0.30, g = 0.24, b = 1.0},
+			-- Focus Magic
+			[GetSpellInfo(54648)] = {indicator = "", group = L["Mage"], priority = 10, r = 0.67, g = 0.76, b = 1.0},
+			-- Arcane Brilliance
+			[GetSpellInfo(43002)] = {indicator = "", group = L["Mage"], priority = 10, r = 0.10, g = 0.68, b = 0.88},
+			-- Soulstone Ressurection
+			[GetSpellInfo(20707)] = {indicator = "", group = L["Warlock"], priority = 10, r = 0.42, g = 0.21, b = 0.65},
 		}
 	}
+
+	-- Also lets make sure that the player class is set of course
+	playerClass = select(2, UnitClass("player"))
 	
 	-- Hook into the coloring to make sure our color override is set if needed.
 	local UpdateColor = ShadowUF.modules.healthBar.UpdateColor
 	ShadowUF.modules.healthBar.UpdateColor = function(self, frame, ...)
 		-- Check if the unit is cursed, and we need to force it to color it by the debuff
 		if( frame.unitType == "raid" and frame.grid and frame.grid.activeCurse ) then
-			local color = DebuffTypeColor[button.activeCurse]
+			local color = DebuffTypeColor[frame.grid.activeCurse]
 			if( color ) then
-				bar:SetStatusBarColor(color.r, color.g, color.b, ShadowUF.db.profile.bars.alpha)
-				bar.background:SetVertexColor(color.r, color.g, color.b, ShadowUF.db.profile.bars.backgroundAlpha)
+				frame.healthBar:SetStatusBarColor(color.r, color.g, color.b, ShadowUF.db.profile.bars.alpha)
+				frame.healthBar.background:SetVertexColor(color.r, color.g, color.b, ShadowUF.db.profile.bars.backgroundAlpha)
 				return
 			end
 		end
@@ -42,16 +94,6 @@ function Grid:OnEnable(frame)
 	-- Not going to create the indicators we want here, will do that when we do the layout stuff
 	frame.grid = frame.grid or CreateFrame("Frame", nil, frame)
 	frame.grid.indicators = frame.grid.indicators or {}
-
-	-- Set orientation of bars
-	if( frame.healthBar ) then
-		local orientation = ShadowUF.db.profile.units[frame.unitType].grid.vertical and "VERTICAL" or "HORIZONTAL"
-		frame.healthBar:SetOrientation(orientation)
-		
-		if( frame.incHeal ) then
-			frame.incHeal:SetOrientation(orientation)
-		end
-	end
 	
 	-- Of course, watch for auras
 	frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAuras")
@@ -70,6 +112,17 @@ end
 function Grid:OnLayoutApplied(frame)
 	if( not frame.grid ) then return end
 	
+	-- Set orientation of bars
+	if( frame.healthBar ) then
+		local orientation = ShadowUF.db.profile.units[frame.unitType].grid.vertical and "VERTICAL" or "HORIZONTAL"
+		frame.healthBar:SetOrientation(orientation)
+		
+		if( frame.incHeal ) then
+			frame.incHeal:SetOrientation(orientation)
+		end
+	end
+	
+	-- Create indicators
 	local id = 1
 	local config = ShadowUF.db.profile.units[frame.unitType].grid
 	for key, indicatorConfig in pairs(config.indicators) do
@@ -110,13 +163,12 @@ local function scanAura(frame, unit, filter)
 	while( true ) do
 		local name, rank, texture, count, debuffType, duration, endTime, caster, isStealable = UnitAura(unit, index, filter)
 		if( not name ) then break end
-	
-		auraList[name] = true
-		
+			
 		-- Setup the auras in the indicators baserd on priority
+		name = ShadowUF.db.profile.units[frame.unitType].grid.linked[name] or name
 		local auraConfig = ShadowUF.db.profile.units[frame.unitType].grid.auras[name]
 		local indicator = auraConfig and frame.grid.indicators[auraConfig.indicator]
-		if( indicator and indicator.enabled and auraConfig.priority > indicator.priority and not auraConfig.missing and ( not auraConfig.player or caster == "player" or caster == "vehicle" ) ) then
+		if( indicator and indicator.enabled and auraConfig.priority > indicator.priority and not auraConfig.missing and ( not auraConfig.player or caster == "player" or caster == "vehicle" ) and not ShadowUF.db.profile.units[frame.unitType].grid.disabled[playerClass .. name] ) then
 			indicator.priority = auraConfig.priority
 			indicator.showIcon = auraConfig.icon
 			indicator.showDuration = auraConfig.duration
@@ -132,6 +184,9 @@ local function scanAura(frame, unit, filter)
 		if( debuffType and filter == "HARMFUL" and ShadowUF.modules.auras.canRemove[debuffType] ) then
 			frame.grid.currentCurse = debuffType
 		end
+
+		-- Save a small list that we can duplicate check, and figure out whats missing
+		auraList[name] = true
 
 		index = index + 1
 	end
@@ -176,13 +231,13 @@ function Grid:UpdateAuras(frame)
 	for name, aura in pairs(ShadowUF.db.profile.units[frame.unitType].grid.auras) do
 		if( aura.missing and not auraList[name] ) then
 			local indicator = frame.grid.indicators[aura.indicator]
-			if( indicator and indicator.enabled and aura.priority > indicator.priority ) then
+			if( indicator and indicator.enabled and aura.priority > indicator.priority and not ShadowUF.db.profile.units[frame.unitType].grid.disabled[playerClass .. name] ) then
 				indicator.priority = aura.priority
 				indicator.showIcon = aura.icon
 				indicator.showDuration = aura.duration
 				indicator.spellDuration = 0
 				indicator.spellEnd = 0
-				indicator.spellIcon = aura.iconTexture
+				indicator.spellIcon = aura.iconTexture or select(3, GetSpellInfo(name))
 				indicator.colorR = aura.r
 				indicator.colorG = aura.g
 				indicator.colorB = aura.b
@@ -192,6 +247,7 @@ function Grid:UpdateAuras(frame)
 	
 	-- Active curse changed, make sure we update coloring
 	if( frame.grid.currentCurse ~= frame.grid.activeCurse ) then
+		frame.grid.activeCurse = frame.grid.currentCurse
 		ShadowUF.modules.healthBar:UpdateColor(frame)
 	end
 	
@@ -207,17 +263,15 @@ function Grid:OnConfigurationLoad()
 		name = L["Enable vertical health"],
 		desc = L["Changes the health bar to go from top -> bottom instead of right -> left when players lose health."],
 		arg = "grid.vertical",
-		width = "full",
 		hidden = function(info) return info[2] ~= "raid" end,
 	}
 
 	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.cursed = {
-		order = 0,
+		order = 0.10,
 		type = "toggle",
 		name = L["Enable debuff coloring"],
 		desc = L["If the player is debuffed with something you can cure, the health bar will be colored with the debuff type."],
 		arg = "grid.cursed",
-		width = "full",
 		hidden = function(info) return info[2] ~= "raid" end,
 	}
 	
@@ -231,10 +285,20 @@ function Grid:OnConfigurationLoad()
 		return groupList
 	end
 
+	local auraList = {}
+	local function getAuraList(info)
+		for k in pairs(auraList) do auraList[k] = nil end
+		for name in pairs(ShadowUF.db.profile.units.raid.grid.auras) do
+			auraList[name] = name
+		end
+	
+		return auraList
+	end
+
 	local indicatorList = {}
 	local function getIndicatorList(info)
 		for k in pairs(indicatorList) do indicatorList[k] = nil end
-		indicatorList[""] = L["None"]
+		indicatorList[""] = L["None (Disabled)"]
 		for key, indicator in pairs(ShadowUF.db.profile.units.raid.grid.indicators) do
 			indicatorList[key] = indicator.name
 		end
@@ -242,8 +306,8 @@ function Grid:OnConfigurationLoad()
 		return indicatorList
 	end
 
-	local groupMap, auraMap = {}, {}
-	local groupID, auraID = 0, 0
+	local groupMap, auraMap, linkMap = {}, {}, {}
+	local groupID, auraID, linkID = 0, 0, 0
 	
 	-- Actual aura configuration
 	local auraGroupTable = {
@@ -378,6 +442,8 @@ function Grid:OnConfigurationLoad()
 							ShadowUF.Config.options.args.grid.args.auras.args[tostring(groupID)] = nil
 						end
 					end
+					
+					ShadowUF.Layout:ReloadAll("raid")
 				end,
 			},
 		},
@@ -410,7 +476,7 @@ function Grid:OnConfigurationLoad()
 						order = 1,
 						type = "select",
 						name = SL["Anchor point"],
-						values = {["ITR"] = SL["Inside Top Right"], ["ITL"] = SL["Inside Top Left"], ["ICL"] = SL["Inside Center Left"], ["IC"] = SL["Inside Center"], ["ICR"] = SL["Inside Center Right"]},
+						values = {["IBR"] = SL["Inside Bottom Right"], ["IBL"] = SL["Inside Bottom Left"], ["ITR"] = SL["Inside Top Right"], ["ITL"] = SL["Inside Top Left"], ["ICL"] = SL["Inside Center Left"], ["IC"] = SL["Inside Center"], ["ICR"] = SL["Inside Center Right"]},
 					},
 					sep = {
 						order = 2,
@@ -462,6 +528,8 @@ function Grid:OnConfigurationLoad()
 									aura.indicator = ""
 								end
 							end
+							
+							ShadowUF.Layout:ReloadAll("raid")
 						end,
 					},
 				},
@@ -469,8 +537,59 @@ function Grid:OnConfigurationLoad()
 		},
 	}
 	
+	local parentLinkTable = {
+		order = 3,
+		type = "group",
+		name = function(info) return linkMap[info[#(info)]] end,
+		args = {},
+	}
+	
+	local childLinkTable = {
+		order = 1,
+		name = function(info) return linkMap[info[#(info)]] end,
+		hidden = function(info)
+			local aura = linkMap[info[#(info)]]
+			local parent = linkMap[info[#(info) - 1]]
+			
+			return ShadowUF.db.profile.units.raid.grid.linked[aura] ~= parent
+		end,
+		type = "group",
+		inline = true,
+		args = {
+			delete = {
+				type = "execute",
+				name = L["Delete link"],
+				hidden = false,
+				func = function(info)
+					local aura = linkMap[info[#(info) - 1]]
+					local parent = ShadowUF.db.profile.units.raid.grid.linked[aura]
+					ShadowUF.db.profile.units.raid.grid.linked[aura] = nil
+					parentLinkTable.args[aura] = nil
+					
+					local found
+					for _, to in pairs(ShadowUF.db.profile.units.raid.grid.linked) do
+						if( to == parent ) then
+							found = true
+							break
+						end
+					end
+					
+					if( not found ) then
+						for id, name in pairs(linkMap) do
+							if( name == parent ) then
+								ShadowUF.Config.options.args.grid.args.linked.args[tostring(id)] = nil
+							end
+						end
+					end
+					
+					ShadowUF.Layout:ReloadAll("raid")
+				end,
+			},
+		},
+	}
+	
 	-- Actual tab view thing
-	local addAura = {}
+	local addAura, addLink = {}, {}
 	ShadowUF.Config.options.args.grid = {
 		order = 1.50,
 		type = "group",
@@ -520,7 +639,7 @@ function Grid:OnConfigurationLoad()
 				},
 			},
 			auras = {
-				order = 0,
+				order = 1,
 				type = "group",
 				name = L["Auras"],
 				args = {
@@ -607,6 +726,8 @@ function Grid:OnConfigurationLoad()
 											AceRegistry = AceRegistry or LibStub("AceConfigRegistry-3.0")
 											AceDialog.Status.ShadowedUF.children.grid.children.auras.status.groups.selected = tostring(gID or groupID)
 											AceRegistry:NotifyChange("ShadowedUF")
+											
+											ShadowUF.Layout:ReloadAll("raid")
 										end,
 									},
 								},
@@ -615,15 +736,169 @@ function Grid:OnConfigurationLoad()
 					},
 				},
 			},
+			linked = {
+				order = 2,
+				type = "group",
+				name = L["Linked spells"],
+				childGroups = "tree",
+				args = {
+					help = {
+						order = 0,
+						type = "group",
+						name = SL["Help"],
+						inline = true,
+						args = {
+							help = {
+								order = 0,
+								type = "description",
+								name = L["You can link auras together using this, for example you can link Mark of the Wild to Gift of the Wild so if the player has Mark of the Wild but not Gift of the Wild, it will still show Mark of the Wild as if they had Gift of the Wild."],
+								width = "full",
+							},
+						},
+					},
+					add = {
+						order = 1,
+						type = "group",
+						name = L["Add link"],
+						inline = true,
+						set = function(info, value)
+							addLink[info[#(info)]] = value
+						end,
+						get = function(info) return addLink[info[#(info)]] end,
+						args = {
+							from = {
+								order = 0,
+								type = "input",
+								name = L["Link from"],
+								desc = L["Spell you want to link to a primary aura, the casing must be exact."],
+							},
+							to = {
+								order = 1,
+								type = "select",
+								name = L["Link to"],
+								values = getAuraList,
+							},
+							link = {
+								order = 3,
+								type = "execute",
+								name = L["Link"],
+								disabled = function() return not addLink.from or not addLink.to or addLink.from == "" end,
+								func = function(info)
+									local lID, pID
+									for id, name in pairs(linkMap) do
+										if( name == addLink.from ) then
+											lID = id
+										elseif( name == addLink.to ) then
+											pID = id
+										end
+									end
+									
+									if( not pID ) then
+										linkID = linkID + 1
+										pID = linkID
+										linkMap[tostring(linkID)] = addLink.to
+									end
+
+									if( not lID ) then
+										linkID = linkID + 1
+										lID = linkID
+										linkMap[tostring(linkID)] = addLink.from
+									end
+																		
+									ShadowUF.db.profile.units.raid.grid.linked[addLink.from] = addLink.to
+									ShadowUF.Config.options.args.grid.args.linked.args[tostring(pID)] = parentLinkTable
+									parentLinkTable.args[tostring(lID)] = childLinkTable
+
+									addLink.from = nil
+									addLink.to = nil
+									
+									ShadowUF.Layout:ReloadAll("raid")
+								end,
+							},
+						},
+					},
+				},
+			},
+			classes = {
+				order = 3,
+				type = "group",
+				name = L["Enable by class"],
+				childGroups = "tree",
+				args = {
+					help = {
+						order = 0,
+						type = "group",
+						name = SL["Help"],
+						inline = true,
+						args = {
+							help = {
+								order = 0,
+								type = "description",
+								name = L["You can override what aura is enabled on a per-class basis, note that if the aura is disabled through the main listing, then your class settings here will not matter."],
+								width = "full",
+							},
+						},
+					}
+				},
+			},
 		},
 	}
 	
+	local classTable = {
+		order = 1,
+		type = "group",
+		name = function(info) return SL.classes[info[#(info)]] end,
+		args = {},
+	}
 	
+	local classAuraTable = {
+		order = 1,
+		type = "toggle",
+		name = function(info) return auraMap[info[#(info)]] end,
+		set = function(info, value)
+			local aura = auraMap[info[#(info)]]
+			local class = info[#(info) - 1]
+			value = not value
+
+			if( value == false ) then value = nil end
+			ShadowUF.db.profile.units.raid.grid.disabled[class .. aura] = value
+			ShadowUF.Layout:ReloadAll("raid")
+		end,
+		get = function(info)
+			local aura = auraMap[info[#(info)]]
+			local class = info[#(info) - 1]
+			
+			return not ShadowUF.db.profile.units.raid.grid.disabled[class .. aura]
+		end,
+	}
+	
+	-- Build links	
+	local addedFrom = {}
+	for from, to in pairs(ShadowUF.db.profile.units.raid.grid.linked) do
+		local pID = addedFrom[to] 
+		if( not pID ) then
+			linkID = linkID + 1
+			pID = linkID
+
+			addedFrom[to] = pID
+		end
+
+		linkID = linkID + 1
+		
+		ShadowUF.db.profile.units.raid.grid.linked[from] = to
+		ShadowUF.Config.options.args.grid.args.linked.args[tostring(pID)] = parentLinkTable
+		parentLinkTable.args[tostring(linkID)] = childLinkTable
+		
+		linkMap[tostring(linkID)] = from
+		linkMap[tostring(pID)] = to
+	end
+									
 	-- Build the aura configuration
 	local parents = {}
 	for key, aura in pairs(ShadowUF.db.profile.units.raid.grid.auras) do
 		auraMap[tostring(auraID)] = key
 		auraGroupTable.args[tostring(auraID)] = auraConfigTable
+		classTable.args[tostring(auraID)] = classAuraTable
 		auraID = auraID + 1
 		
 		parents[aura.group] = true
@@ -635,6 +910,11 @@ function Grid:OnConfigurationLoad()
 		ShadowUF.Config.options.args.grid.args.auras.args[tostring(groupID)] = auraGroupTable
 		
 		groupID = groupID + 1
+	end
+	
+	-- Build class status thing
+	for classToken in pairs(RAID_CLASS_COLORS) do
+		ShadowUF.Config.options.args.grid.args.classes.args[classToken] = classTable
 	end
 	
 	-- Quickly build the indicator one

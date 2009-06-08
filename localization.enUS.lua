@@ -1,6 +1,11 @@
 SUFGridLocals = {
 	-- Aura group names
 	["Druid"] = "Druid",
+	["Priest"] = "Priest",
+	["Shaman"] = "Shaman",
+	["Paladin"] = "Paladin",
+	["Warlock"] = "Warlock",
+	["Mage"] = "Mage",
 	
 	-- Configuration
 	["Grid"] = "Grid",
@@ -10,7 +15,7 @@ SUFGridLocals = {
 	["Changes the health bar to go from top -> bottom instead of right -> left when players lose health."] = "Changes the health bar to go from top -> bottom instead of right -> left when players lose health.",
 	["Enable debuff coloring"] = "Enable debuff coloring",
 	["If the player is debuffed with something you can cure, the health bar will be colored with the debuff type."] = "If the player is debuffed with something you can cure, the health bar will be colored with the debuff type.",
-		
+	["Enable by class"] = "Enable by class",
 	["Show inside"] = "Show inside",
 	["Indicator this aura should be displayed in."] = "Indicator this aura should be displayed in.",
 	["Priority"] = "Priority",
@@ -40,5 +45,16 @@ SUFGridLocals = {
 	["Indicator name"] = "Indicator name",
 	["Add indicator"] = "Add indicator",
 	["Indicators"] = "Indicators",
+	["None (Disabled)"] = "None (Disabled)",
 	["Add new indicator"] = "Add new indicator",
+	["You can override what aura is enabled on a per-class basis, note that if the aura is disabled through the main listing, then your class settings here will not matter."] = "You can override what aura is enabled on a per-class basis, note that if the aura is disabled through the main listing, then your class settings here will not matter.",
+	["Linked spells"] = "Linked spells",
+	["You can link auras together using this, for example you can link Mark of the Wild to Gift of the Wild so if the player has Mark of the Wild but not Gift of the Wild, it will still show Mark of the Wild as if they had Gift of the Wild."] = "You can link auras together using this, for example you can link Mark of the Wild to Gift of the Wild so if the player has Mark of the Wild but not Gift of the Wild, it will still show Mark of the Wild as if they had Gift of the Wild.",
+	["Add link"] = "Add link",
+	["Link from"] = "Link from",
+	["Link to"] = "Link to",
+	["Link"] = "Link",
+	["Spell you want to link to a primary aura, the casing must be exact."] = "Spell you want to link to a primary aura, the casing must be exact.",
+	["Delete %s"] = "Delete %s",
+	["Delete link"] = "Delete link",
 }
