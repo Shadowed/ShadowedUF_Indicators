@@ -318,7 +318,7 @@ function Grid:UpdateAuras(frame)
 	end
 	
 	-- Active curse changed, make sure we update coloring
-	if( frame.grid.currentCurse ~= frame.grid.activeCurse ) then
+	if( frame.grid.currentCurse ~= frame.grid.activeCurse and ShadowUF.db.profile.units[frame.unitType].grid.cursed ) then
 		frame.grid.activeCurse = frame.grid.currentCurse
 		ShadowUF.modules.healthBar:UpdateColor(frame)
 	end
@@ -330,7 +330,7 @@ end
 
 function Grid:OnConfigurationLoad()
 	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.vertical = {
-		order = 0,
+		order = 4.1,
 		type = "toggle",
 		name = L["Enable vertical health"],
 		desc = L["Changes the health bar to go from top -> bottom instead of right -> left when players lose health."],
@@ -339,11 +339,18 @@ function Grid:OnConfigurationLoad()
 	}
 
 	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.cursed = {
-		order = 0.10,
+		order = 4.20,
 		type = "toggle",
 		name = L["Enable debuff coloring"],
 		desc = L["If the player is debuffed with something you can cure, the health bar will be colored with the debuff type."],
 		arg = "grid.cursed",
+		hidden = function(info) return info[2] ~= "raid" end,
+	}
+
+	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.sepgrid = {
+		order = 4.30,
+		type = "description",
+		name = "",
 		hidden = function(info) return info[2] ~= "raid" end,
 	}
 	
