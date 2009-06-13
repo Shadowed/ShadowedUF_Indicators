@@ -12,10 +12,10 @@ function Grid:OnDefaultsSet()
 	ShadowUF.defaults.profile.units.raid.grid = {enabled = true, cursed = false, vertical = false, disabled = {},
 		indicators = {
 			["tl"] = {enabled = true, name = ShadowUFLocals["Top Left"], anchorPoint = "ITL", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 8, y = 3},
-			["tr"] = {enabled = true, name = ShadowUFLocals["Top Right"], anchorPoint = "ITR", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -5, y = 3},
+			["tr"] = {enabled = true, name = ShadowUFLocals["Top Right"], anchorPoint = "ITR", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -4, y = 3},
 			["bl"] = {enabled = true, name = ShadowUFLocals["Bottom Left"], anchorPoint = "IBL", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 8, y = 5},
 			["br"] = {enabled = true, name = ShadowUFLocals["Bottom Right"], anchorPoint = "IBR", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -4, y = 4},
-			["c"] = {enabled = true, name = ShadowUFLocals["Center"], anchorPoint = "IC", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 0, y = 0},
+			["c"] = {enabled = true, name = ShadowUFLocals["Center"], anchorPoint = "IC", anchorTo = "$parent", height = 20, width = 20, alpha = 1.0, x = 0, y = 0},
 		},
 		linked = {
 			-- Shadow Protection -> Prayer of Shadow Protection
@@ -64,6 +64,62 @@ function Grid:OnDefaultsSet()
 			[GetSpellInfo(43002)] = {indicator = "", group = L["Mage"], priority = 10, r = 0.10, g = 0.68, b = 0.88},
 			-- Soulstone Ressurection
 			[GetSpellInfo(20707)] = {indicator = "", group = L["Warlock"], priority = 10, r = 0.42, g = 0.21, b = 0.65},
+			-- Saronite Vapors
+			[GetSpellInfo(63337)] = {indicator = "c", group = L["General Vezax"], priority = 50, r = 0, g = 0, b = 0},
+			-- Shadow Crash
+			[GetSpellInfo(62659)] = {indicator = "c", group = L["General Vezax"], priority = 5, r = 0, g = 0, b = 0},
+			-- Iron Roots
+			[GetSpellInfo(63601)] = {indicator = "c", group = L["Freya"], priority = 0, r = 0, g = 0, b = 0},
+			-- Nature's Fury
+			[GetSpellInfo(63571)] = {indicator = "c", group = L["Freya"], priority = 100, r = 0, g = 0, b = 0},
+			-- Slag Pot
+			[GetSpellInfo(62717)] = {indicator = "c", group = L["Ignis the Furnace Master"], priority = 0, r = 0, g = 0, b = 0},
+			-- Sentinel Blast
+			[GetSpellInfo(64389)] = {indicator = "c", group = L["Auriaya"], priority = 20, r = 0, g = 0, b = 0},
+			-- Rip Flesh
+			[GetSpellInfo(64667)] = {indicator = "c", group = L["Auriaya"], priority = 0, r = 0, g = 0, b = 0},
+			-- Savage Pounce
+			[GetSpellInfo(64374)] = {indicator = "c", group = L["Auriaya"], priority = 10, r = 0, g = 0, b = 0},
+			-- Feral Pounce
+			[GetSpellInfo(64478)] = {indicator = "c", group = L["Auriaya"], priority = 5, r = 0, g = 0, b = 0},
+			-- Devouring Flame
+			[GetSpellInfo(64733)] = {indicator = "c", group = L["Razorscale"], priority = 10, r = 0, g = 0, b = 0},
+			-- Brittle Skin
+			[GetSpellInfo(62055)] = {indicator = "c", group = L["Kologarn"], priority = 0, r = 0, g = 0, b = 0},
+			-- Stone Grip
+			[GetSpellInfo(63981)] = {indicator = "c", group = L["Kologarn"], priority = 10, r = 0, g = 0, b = 0},
+			-- Flash Freeze
+			[GetSpellInfo(61969)] = {indicator = "c", group = L["Hodir"], priority = 0, r = 0, g = 0, b = 0},
+			-- Battering Ram
+			[GetSpellInfo(62376)] = {indicator = "", group = L["Flame Leviathan"], priority = 0, r = 0, g = 0, b = 0},
+			-- Overwhelming Power
+			[GetSpellInfo(64637)] = {indicator = "c", group = L["Assembly of Iron"], priority = 0, r = 0, g = 0, b = 0},
+			-- Fusion Punch
+			[GetSpellInfo(63493)] = {indicator = "c", group = L["Assembly of Iron"], priority = 0, r = 0, g = 0, b = 0},
+			-- Searing Light
+			[GetSpellInfo(63018)] = {indicator = "c", group = L["XT-002 Deconstructor"], priority = 0, r = 0, g = 0, b = 0},
+			-- Gravity Bomb
+			[GetSpellInfo(64234)] = {indicator = "c", group = L["XT-002 Deconstructor"], priority = 0, r = 0, g = 0, b = 0},
+			-- Malady of the Mind
+			[GetSpellInfo(63830)] = {indicator = "", group = L["Yogg-Saron"], priority = 50, r = 0, g = 0, b = 0},
+			-- Draining Poison
+			[GetSpellInfo(64152)] = {indicator = "c", group = L["Yogg-Saron"], priority = 5, r = 0, g = 0, b = 0},
+			-- Dark Volley
+			[GetSpellInfo(63038)] = {indicator = "c", group = L["Yogg-Saron"], priority = 0, r = 0, g = 0, b = 0},
+			-- Sara's Blessing
+			[GetSpellInfo(63134)] = {indicator = "c", group = L["Yogg-Saron"], priority = 25, r = 0, g = 0, b = 0},
+			-- Dominate Mind
+			[GetSpellInfo(63713)] = {indicator = "c", group = L["Yogg-Saron"], priority = 100, r = 0, g = 0, b = 0},
+			-- Drain Life
+			[GetSpellInfo(36655)] = {indicator = "", group = L["Yogg-Saron"], priority = 1, r = 0, g = 0, b = 0},
+			-- Sara's Anger
+			[GetSpellInfo(63147)] = {indicator = "", group = L["Yogg-Saron"], priority = 50, r = 0, g = 0, b = 0},
+			-- Curse of Doom
+			[GetSpellInfo(30910)] = {indicator = "", group = L["Yogg-Saron"], priority = 100, r = 0, g = 0, b = 0},
+			-- Insane
+			[GetSpellInfo(63120)] = {indicator = "c", group = L["Yogg-Saron"], priority = 100, r = 0, g = 0, b = 0},
+			-- Squeeze
+			[GetSpellInfo(64125)] = {indicator = "c", group = L["Yogg-Saron"], priority = 75, r = 0, g = 0, b = 0},
 		}
 	}
 
@@ -109,6 +165,7 @@ function Grid:OnDisable(frame)
 	end
 end
 
+local backdropTbl
 function Grid:OnLayoutApplied(frame)
 	if( not frame.grid ) then return end
 	
@@ -123,6 +180,14 @@ function Grid:OnLayoutApplied(frame)
 	end
 	
 	-- Create indicators
+	backdropTbl = backdropTbl or {
+		bgFile = "Interface\\Addons\\ShadowedUF_Grid\\backdrop",
+		edgeFile = "Interface\\Addons\\ShadowedUF_Grid\\backdrop",
+		tile = true,
+		tileSize = 1,
+		edgeSize = 1,
+	}
+	
 	local id = 1
 	local config = ShadowUF.db.profile.units[frame.unitType].grid
 	for key, indicatorConfig in pairs(config.indicators) do
@@ -130,10 +195,12 @@ function Grid:OnLayoutApplied(frame)
 		local indicator = frame.grid.indicators[id]
 		if( not indicator ) then
 			indicator = CreateFrame("Frame", nil, frame.grid)
-			indicator:SetFrameLevel(frame.topFrameLevel)
+			indicator:SetFrameLevel(frame.topFrameLevel + 1)
 			indicator.texture = indicator:CreateTexture(nil, "OVERLAY")
-			indicator.texture:SetAllPoints(indicator)
+			indicator.texture:SetPoint("CENTER", indicator)
 			indicator:SetAlpha(indicatorConfig.alpha)
+			indicator:SetBackdrop(backdropTbl)
+			indicator:SetBackdropColor(0, 0, 0, 1)
 			
 			indicator.cooldown = CreateFrame("Cooldown", nil, indicator, "CooldownFrameTemplate")
 			indicator.cooldown:SetReverse(true)
@@ -146,7 +213,10 @@ function Grid:OnLayoutApplied(frame)
 		indicator.enabled = indicatorConfig and indicatorConfig.enabled
 		if( indicator.enabled ) then
 			indicator:SetHeight(indicatorConfig.height)
+			indicator.texture:SetWidth(indicatorConfig.width - 1)
 			indicator:SetWidth(indicatorConfig.width)
+			indicator.texture:SetHeight(indicatorConfig.height - 1)
+			
 			ShadowUF.Layout:AnchorFrame(frame, indicator, indicatorConfig)
 			
 			-- Let the auras module quickly access indicators without having to use index
@@ -205,8 +275,10 @@ function Grid:UpdateIndicators(indicators)
 			-- Show either the icon, or a solid color
 			if( indicator.showIcon and indicator.spellIcon ) then
 				indicator.texture:SetTexture(indicator.spellIcon)
+				indicator:SetBackdropColor(0, 0, 0, 0)
 			else
 				indicator.texture:SetTexture(indicator.colorR, indicator.colorG, indicator.colorB)
+				indicator:SetBackdropColor(0, 0, 0, 1)
 			end
 			
 			indicator:Show()
@@ -311,14 +383,21 @@ function Grid:OnConfigurationLoad()
 	
 	-- Actual aura configuration
 	local auraGroupTable = {
-		order = 1,
+		order = function(info)
+			local group = groupMap[info[#(info)]]
+			for _, class in pairs(SL.classes) do
+				if( group == class ) then return 1 end
+			end
+			
+			return 2
+		end,
 		type = "group",
 		name = function(info) return groupMap[info[#(info)]] end,
 		args = {},
 	}
 	
 	local auraConfigTable = {
-		order = 1,
+		order = 0,
 		type = "group",
 		inline = true,
 		name = function(info) return auraMap[info[#(info)]] end,

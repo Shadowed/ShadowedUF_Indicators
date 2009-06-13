@@ -6,7 +6,19 @@ SUFGridLocals = {
 	["Paladin"] = "Paladin",
 	["Warlock"] = "Warlock",
 	["Mage"] = "Mage",
-	
+
+	["Yogg-Saron"] = "Yogg-Saron",
+	["Ignis the Furnace Master"] = "Ignis the Furnace Master",
+	["XT-002 Deconstructor"] = "XT-002 Deconstructor",
+	["Assembly of Iron"] = "Assembly of Iron",
+	["Auriaya"] = "Auriaya",
+	["Razorscale"] = "Razorscale",
+	["Kologarn"] = "Kologarn",
+	["Freya"] = "Freya",
+	["Hodir"] = "Hodir",
+	["Flame Leviathan"] = "Flame Leviathan",
+	["General Vezax"] = "General Vezax",
+
 	-- Configuration
 	["Grid"] = "Grid",
 	["Raid indicators"] = "Raid indicators",
