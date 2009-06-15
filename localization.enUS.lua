@@ -21,6 +21,8 @@ SUFGridLocals = {
 
 	-- Configuration
 	["Grid"] = "Grid",
+	["This color will be used if the indicator shown is your own, only applies if icons are not used.\nHandy if you want to know if a target has a Rejuvenation on them, but you also want to know if you were the one who casted the Rejuvenation."] = "This color will be used if the indicator shown is your own, only applies if icons are not used.\nHandy if you want to know if a target has a Rejuvenation on them, but you also want to know if you were the one who casted the Rejuvenation.",
+	["Your aura color"] = "Your aura color",
 	["Raid indicators"] = "Raid indicators",
 	["Indicators"] = "Indicators",
 	["Enable vertical health"] = "Enable vertical health",
