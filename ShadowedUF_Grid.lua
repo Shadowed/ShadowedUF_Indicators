@@ -339,6 +339,16 @@ function Grid:UpdateAuras(frame)
 	
 	frame.grid.currentCurse = nil
 	
+	if( UnitIsDeadOrGhost(frame.unit) or not UnitIsConnected(frame.unit) ) then
+		self:UpdateIndicators(frame.grid.indicators)
+		
+		if( frame.grid.activeCurse ) then
+			frame.grid.activeCurse = nil
+			ShadowUF.modules.healthBar:UpdateColor(frame)
+		end
+		return
+	end
+	
 	-- Scan auras
 	scanAura(frame, frame.unit, "HELPFUL")
 	scanAura(frame, frame.unit, "HARMFUL")
@@ -640,12 +650,43 @@ function Grid:OnConfigurationLoad()
 						name = SL["Anchor point"],
 						values = {["IBR"] = SL["Inside Bottom Right"], ["IBL"] = SL["Inside Bottom Left"], ["ITR"] = SL["Inside Top Right"], ["ITL"] = SL["Inside Top Left"], ["ICL"] = SL["Inside Center Left"], ["IC"] = SL["Inside Center"], ["ICR"] = SL["Inside Center Right"]},
 					},
-					showStack = {
+					sep = {
 						order = 2,
+						type = "description",
+						name = "",
+						width = "full",
+					},
+					size = {
+						order = 3,
+						name = SL["Size"],
+						type = "range",
+						min = 0, max = 50, step = 1,
+						set = function(info, value)
+							local indicator = info[#(info) - 2]
+							ShadowUF.db.profile.units.raid.grid.indicators[indicator].height = value
+							ShadowUF.db.profile.units.raid.grid.indicators[indicator].width = value
+							ShadowUF.Layout:ReloadAll("raid")
+						end,
+						get = function(info)
+							local indicator = info[#(info) - 2]
+							-- Upgrade code, force them to be the same size
+							if( ShadowUF.db.profile.units.raid.grid.indicators[indicator].height ~= ShadowUF.db.profile.units.raid.grid.indicators[indicator].width ) then
+								local size = max(ShadowUF.db.profile.units.raid.grid.indicators[indicator].height, ShadowUF.db.profile.units.raid.grid.indicators[indicator].width)
+								
+								ShadowUF.db.profile.units.raid.grid.indicators[indicator].height = size
+								ShadowUF.db.profile.units.raid.grid.indicators[indicator].width = size
+							end
+							
+							return ShadowUF.db.profile.units.raid.grid.indicators[indicator].height
+						end,
+					},
+					showStack = {
+						order = 4,
 						type = "toggle",
 						name = L["Show auras stack"],
 						desc = L["Any auras shown in this indicator will have their total stack displayed."],
 					},
+					--[[
 					height = {
 						order = 4,
 						name = SL["Height"],
@@ -657,7 +698,7 @@ function Grid:OnConfigurationLoad()
 						name = SL["Width"],
 						type = "range",
 						min = 0, max = 50, step = 1,
-					},
+					},]]
 					x = {
 						order = 5,
 						type = "range",
