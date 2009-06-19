@@ -133,20 +133,28 @@ function Grid:OnDefaultsSet()
 		if( frame.unitType == "raid" and frame.grid and frame.grid.activeCurse ) then
 			local color = DebuffTypeColor[frame.grid.activeCurse]
 			if( color ) then
-				frame.healthBar:SetStatusBarColor(color.r, color.g, color.b, ShadowUF.db.profile.bars.alpha)
-				frame.healthBar.background:SetVertexColor(color.r, color.g, color.b, ShadowUF.db.profile.bars.backgroundAlpha)
+				self:SetBarColor(frame.healthBar, color.r, color.g, color.b)
 				return
 			end
 		end
 		
 		return UpdateColor(self, frame, ...)
 	end
+	
+	-- Hook into the bar coloring for inverted options
+	local SetBarColor = ShadowUF.modules.healthBar.SetBarColor
+	ShadowUF.modules.healthBar.SetBarColor = function(self, bar, r, g, b)
+		if( bar.unitType == "raid" and ShadowUF.db.profile.units.raid.grid.invert ) then
+			bar:SetStatusBarColor(0, 0, 0, 0.70)
+			bar.background:SetVertexColor(r, g, b, ShadowUF.db.profile.bars.alpha)
+			return
+		end
+		
+		SetBarColor(self, bar, r, g, b)
+	end
 end
 
 function Grid:OnEnable(frame)
-	-- Remove this value quickly, I'll kill it later
-	ShadowUF.db.profile.units.raid.grid.auras["Strengthened Iron Roots"] = nil
-	
 	-- Force a check cures check in case every aura is disabled
 	ShadowUF.modules.auras:CheckCures()
 
@@ -154,6 +162,8 @@ function Grid:OnEnable(frame)
 	frame.grid = frame.grid or CreateFrame("Frame", nil, frame)
 	frame.grid.indicators = frame.grid.indicators or {}
 	
+	frame.healthBar.unitType = "raid"
+		
 	-- Of course, watch for auras
 	frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAuras")
 	frame:RegisterUpdateFunc(self, "UpdateAuras")
@@ -162,6 +172,7 @@ end
 function Grid:OnDisable(frame)
 	frame:UnregisterAll(self)
 	frame.healthBar:SetOrientation("HORIZONTAL")
+	frame.healthBar.unitType = nil
 	
 	if( frame.incHeal ) then
 		frame.incHeal:SetOrientation("HORIZONTAL")
@@ -208,6 +219,15 @@ function Grid:OnLayoutApplied(frame)
 			indicator.cooldown = CreateFrame("Cooldown", nil, indicator, "CooldownFrameTemplate")
 			indicator.cooldown:SetReverse(true)
 			indicator.cooldown:SetPoint("CENTER", 0, -1)
+
+			indicator.stack = indicator:CreateFontString(nil, "OVERLAY")
+			indicator.stack:SetFont("Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", 12, "OUTLINE")
+			indicator.stack:SetShadowColor(0, 0, 0, 1.0)
+			indicator.stack:SetShadowOffset(0.8, -0.8)
+			indicator.stack:SetPoint("BOTTOMRIGHT", indicator, "BOTTOMRIGHT", 1, 0)
+			indicator.stack:SetWidth(18)
+			indicator.stack:SetHeight(10)
+			indicator.stack:SetJustifyH("RIGHT")
 			
 			frame.grid.indicators[id] = indicator
 		end
@@ -252,6 +272,7 @@ local function scanAura(frame, unit, filter)
 			end
 
 			if( priority > indicator.priority ) then
+				indicator.showStack = ShadowUF.db.profile.units[frame.unitType].grid.indicators[auraConfig.indicator].showStack
 				indicator.priority = priority
 				indicator.showIcon = auraConfig.icon
 				indicator.showDuration = auraConfig.duration
@@ -259,6 +280,7 @@ local function scanAura(frame, unit, filter)
 				indicator.spellEnd = endTime
 				indicator.spellIcon = texture
 				indicator.spellName = name
+				indicator.spellStack = count
 				indicator.colorR = color.r
 				indicator.colorG = color.g
 				indicator.colorB = color.b
@@ -294,6 +316,13 @@ function Grid:UpdateIndicators(indicators)
 			else
 				indicator.texture:SetTexture(indicator.colorR, indicator.colorG, indicator.colorB)
 				indicator:SetBackdropColor(0, 0, 0, 1)
+			end
+			
+			-- Show aura stack
+				indicator.stack:SetText(indicator.spellStack)
+			if( indicator.showStack and indicator.spellStack > 0 ) then
+			else
+				indicator.stack:Hide()
 			end
 			
 			indicator:Show()
@@ -359,6 +388,15 @@ function Grid:OnConfigurationLoad()
 		name = L["Enable debuff coloring"],
 		desc = L["If the player is debuffed with something you can cure, the health bar will be colored with the debuff type."],
 		arg = "grid.cursed",
+		hidden = function(info) return info[2] ~= "raid" end,
+	}
+
+	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.invert = {
+		order = 4.25,
+		type = "toggle",
+		name = L["Invert bar color"],
+		desc = L["If the player is debuffed with something you can cure, the health bar will be colored with the debuff type."],
+		arg = "grid.invert",
 		hidden = function(info) return info[2] ~= "raid" end,
 	}
 
@@ -495,7 +533,7 @@ function Grid:OnConfigurationLoad()
 				type = "color",
 				name = L["Indicator color"],
 				desc = L["Solid color to use in the indicator, only used if you do not have use aura icon enabled."],
-				hidden = false,
+				hidden = function(info) return ShadowUF.db.profile.units.raid.grid.auras[auraMap[info[#(info) - 1]]].icon end,
 				hasAlpha = true,
 			},
 			selfColor = {
@@ -503,7 +541,10 @@ function Grid:OnConfigurationLoad()
 				type = "color",
 				name = L["Your aura color"],
 				desc = L["This color will be used if the indicator shown is your own, only applies if icons are not used.\nHandy if you want to know if a target has a Rejuvenation on them, but you also want to know if you were the one who casted the Rejuvenation."],
-				hidden = function(info) return ShadowUF.db.profile.units.raid.grid.auras[auraMap[info[#(info) - 1]]].player end,
+				hidden = function(info) 
+					if( ShadowUF.db.profile.units.raid.grid.auras[auraMap[info[#(info) - 1]]].icon ) then return true end
+					return ShadowUF.db.profile.units.raid.grid.auras[auraMap[info[#(info) - 1]]].player
+				end,
 				hasAlpha = true,
 			},
 			sep2 = {
@@ -599,12 +640,11 @@ function Grid:OnConfigurationLoad()
 						name = SL["Anchor point"],
 						values = {["IBR"] = SL["Inside Bottom Right"], ["IBL"] = SL["Inside Bottom Left"], ["ITR"] = SL["Inside Top Right"], ["ITL"] = SL["Inside Top Left"], ["ICL"] = SL["Inside Center Left"], ["IC"] = SL["Inside Center"], ["ICR"] = SL["Inside Center Right"]},
 					},
-					sep = {
+					showStack = {
 						order = 2,
-						type = "description",
-						name = "",
-						width = "full",
-						hidden = hideAdvancedOption,
+						type = "toggle",
+						name = L["Show auras stack"],
+						desc = L["Any auras shown in this indicator will have their total stack displayed."],
 					},
 					height = {
 						order = 4,
@@ -718,7 +758,6 @@ function Grid:OnConfigurationLoad()
 		type = "group",
 		name = L["Grid"],
 		childGroups = "tab",
-		hidden = function(info) return not ShadowUF.db.profile.units.raid.enabled end,
 		args = {
 			indicators = {
 				order = 0,
@@ -1048,12 +1087,13 @@ function Grid:OnConfigurationLoad()
 	end
 	
 	-- Automatically unlock the advanced text configuration for raid frames, regardless of advanced being enabled
+	local advanceTextTable = ShadowUF.Config.advanceTextTable
+	local originalHidden = advanceTextTable.args.sep.hidden
 	local function unlockRaidText(info)
-		if( info[2] ~= "raid" ) then return ShadowUF.Config.hideAdvancedOption(info) end
-		return true
+		if( info[2] == "raid" ) then return false end
+		return originalHidden(info)
 	end
 	
-	local advanceTextTable = ShadowUF.Config.advanceTextTable
 	advanceTextTable.args.anchorPoint.hidden = unlockRaidText
 	advanceTextTable.args.sep.hidden = unlockRaidText
 	advanceTextTable.args.x.hidden = unlockRaidText

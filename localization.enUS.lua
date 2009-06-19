@@ -20,6 +20,10 @@ SUFGridLocals = {
 	["General Vezax"] = "General Vezax",
 
 	-- Configuration
+	["Invert bar color"] = "Invert bar color",
+	["Show auras stack"] = "Show auras stack",
+	["Swaps the health bar and the health bar background coloring."] = "Swaps the health bar and the health bar background coloring.",
+	["Any auras shown in this indicator will have their total stack displayed."] = "Any auras shown in this indicator will have their total stack displayed.",
 	["Grid"] = "Grid",
 	["This color will be used if the indicator shown is your own, only applies if icons are not used.\nHandy if you want to know if a target has a Rejuvenation on them, but you also want to know if you were the one who casted the Rejuvenation."] = "This color will be used if the indicator shown is your own, only applies if icons are not used.\nHandy if you want to know if a target has a Rejuvenation on them, but you also want to know if you were the one who casted the Rejuvenation.",
 	["Your aura color"] = "Your aura color",
