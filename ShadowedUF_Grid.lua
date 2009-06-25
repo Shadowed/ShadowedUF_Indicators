@@ -155,9 +155,6 @@ function Grid:OnDefaultsSet()
 end
 
 function Grid:OnEnable(frame)
-	-- Force a check cures check in case every aura is disabled
-	ShadowUF.modules.auras:CheckCures()
-
 	-- Not going to create the indicators we want here, will do that when we do the layout stuff
 	frame.grid = frame.grid or CreateFrame("Frame", nil, frame)
 	frame.grid.indicators = frame.grid.indicators or {}
@@ -286,11 +283,6 @@ local function scanAura(frame, unit, filter)
 				indicator.colorB = color.b
 			end
 		end
-		
-		-- Set the current debuff if we can cure it
-		if( debuffType and filter == "HARMFUL" and ShadowUF.modules.auras.canRemove[debuffType] ) then
-			frame.grid.currentCurse = debuffType
-		end
 
 		-- Save a small list that we can duplicate check, and figure out whats missing
 		auraList[name] = true
@@ -337,8 +329,6 @@ function Grid:UpdateAuras(frame)
 	for _, indicator in pairs(frame.grid.indicators) do indicator.priority = -1 indicator.spellName = nil end
 	for k in pairs(auraList) do auraList[k] = nil end
 	
-	frame.grid.currentCurse = nil
-	
 	if( UnitIsDeadOrGhost(frame.unit) or not UnitIsConnected(frame.unit) ) then
 		self:UpdateIndicators(frame.grid.indicators)
 		
@@ -372,11 +362,14 @@ function Grid:UpdateAuras(frame)
 	end
 	
 	-- Active curse changed, make sure we update coloring
-	if( frame.grid.currentCurse ~= frame.grid.activeCurse and ShadowUF.db.profile.units[frame.unitType].grid.cursed ) then
-		frame.grid.activeCurse = frame.grid.currentCurse
-		ShadowUF.modules.healthBar:UpdateColor(frame)
+	if( ShadowUF.db.profile.units[frame.unitType].grid.cursed ) then
+		frame.grid.currentCurse = select(5, UnitDebuff(frame.unit, 1, "RAID")) or nil
+		if( frame.grid.currentCurse ~= frame.grid.activeCurse ) then
+			frame.grid.activeCurse = frame.grid.currentCurse
+			ShadowUF.modules.healthBar:UpdateColor(frame)
+		end
 	end
-	
+
 	-- Now force the indicators to update
 	self:UpdateIndicators(frame.grid.indicators)
 end
