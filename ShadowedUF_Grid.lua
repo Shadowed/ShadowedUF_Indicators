@@ -5,11 +5,11 @@
 local L = SUFGridLocals
 local SL = ShadowUFLocals
 local Grid = {}
-local AceDialgo, AceRegistry, playerClass
+local AceDialog, AceRegistry, playerClass
 ShadowUF:RegisterModule(Grid, "grid")
 
 function Grid:OnDefaultsSet()
-	ShadowUF.defaults.profile.units.raid.grid = {enabled = true, cursed = false, vertical = false, disabled = {},
+	ShadowUF.defaults.profile.units.raid.grid = {enabled = true, cursed = false, disabled = {},
 		indicators = {
 			["tl"] = {enabled = true, name = ShadowUFLocals["Top Left"], anchorPoint = "ITL", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 8, y = 3},
 			["tr"] = {enabled = true, name = ShadowUFLocals["Top Right"], anchorPoint = "ITR", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -4, y = 4},
@@ -140,18 +140,6 @@ function Grid:OnDefaultsSet()
 		
 		return UpdateColor(self, frame, ...)
 	end
-	
-	-- Hook into the bar coloring for inverted options
-	local SetBarColor = ShadowUF.modules.healthBar.SetBarColor
-	ShadowUF.modules.healthBar.SetBarColor = function(self, bar, r, g, b)
-		if( bar.unitType == "raid" and ShadowUF.db.profile.units.raid.grid.invert ) then
-			bar:SetStatusBarColor(0, 0, 0, 0.70)
-			bar.background:SetVertexColor(r, g, b, ShadowUF.db.profile.bars.alpha)
-			return
-		end
-		
-		SetBarColor(self, bar, r, g, b)
-	end
 end
 
 function Grid:OnEnable(frame)
@@ -168,28 +156,12 @@ end
 
 function Grid:OnDisable(frame)
 	frame:UnregisterAll(self)
-	frame.healthBar:SetOrientation("HORIZONTAL")
-	frame.healthBar.unitType = nil
-	
-	if( frame.incHeal ) then
-		frame.incHeal:SetOrientation("HORIZONTAL")
-	end
 end
 
 local backdropTbl
 function Grid:OnLayoutApplied(frame)
 	if( not frame.grid ) then return end
-	
-	-- Set orientation of bars
-	if( frame.healthBar ) then
-		local orientation = ShadowUF.db.profile.units[frame.unitType].grid.vertical and "VERTICAL" or "HORIZONTAL"
-		frame.healthBar:SetOrientation(orientation)
 		
-		if( frame.incHeal ) then
-			frame.incHeal:SetOrientation(orientation)
-		end
-	end
-	
 	-- Create indicators
 	backdropTbl = backdropTbl or {
 		bgFile = "Interface\\Addons\\ShadowedUF_Grid\\backdrop",
@@ -250,19 +222,20 @@ end
 local auraList = {}
 local function scanAura(frame, unit, filter)
 	local index = 1
+	local auraConfig, indicator, name, rank, texture, count, debuffType, duration, endTime, caster, isStealable, priority, color
 	while( true ) do
-		local name, rank, texture, count, debuffType, duration, endTime, caster, isStealable = UnitAura(unit, index, filter)
+		name, rank, texture, count, debuffType, duration, endTime, caster, isStealable = UnitAura(unit, index, filter)
 		if( not name ) then break end
 			
 		-- Setup the auras in the indicators baserd on priority
 		name = ShadowUF.db.profile.units[frame.unitType].grid.linked[name] or name
-		local auraConfig = ShadowUF.db.profile.units[frame.unitType].grid.auras[name]
-		local indicator = auraConfig and frame.grid.indicators[auraConfig.indicator]
+		auraConfig = ShadowUF.db.profile.units[frame.unitType].grid.auras[name]
+		indicator = auraConfig and frame.grid.indicators[auraConfig.indicator]
 				
 		if( indicator and indicator.enabled and not auraConfig.missing and ( not auraConfig.player or caster == PlayerFrame.unit ) and not ShadowUF.db.profile.units[frame.unitType].grid.disabled[playerClass .. name] ) then
 			-- If the indicator is not restricted to the player only, then will give the player a slightly higher priority
-			local priority = auraConfig.priority
-			local color = auraConfig
+			priority = auraConfig.priority
+			color = auraConfig
 			if( not auraConfig.player and caster == PlayerFrame.unit ) then
 				priority = priority + 0.1
 				color = auraConfig.selfColor or auraConfig
@@ -376,37 +349,13 @@ end
 
 
 function Grid:OnConfigurationLoad()
-	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.vertical = {
-		order = 4.1,
-		type = "toggle",
-		name = L["Enable vertical health"],
-		desc = L["Changes the health bar to go from top -> bottom instead of right -> left when players lose health."],
-		arg = "grid.vertical",
-		hidden = function(info) return info[2] ~= "raid" end,
-	}
-
+	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.healthColor.order = function(info) return info[2] == "raid" and 8 or 5 end
 	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.cursed = {
-		order = 4.20,
+		order = 5,
 		type = "toggle",
-		name = L["Enable debuff coloring"],
+		name = L["Color by curable debuff"],
 		desc = L["If the player is debuffed with something you can cure, the health bar will be colored with the debuff type."],
 		arg = "grid.cursed",
-		hidden = function(info) return info[2] ~= "raid" end,
-	}
-
-	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.invert = {
-		order = 4.25,
-		type = "toggle",
-		name = L["Invert bar color"],
-		desc = L["If the player is debuffed with something you can cure, the health bar will be colored with the debuff type."],
-		arg = "grid.invert",
-		hidden = function(info) return info[2] ~= "raid" end,
-	}
-
-	ShadowUF.Config.unitTable.args.bars.args.healthBar.args.sepgrid = {
-		order = 4.30,
-		type = "description",
-		name = "",
 		hidden = function(info) return info[2] ~= "raid" end,
 	}
 	
@@ -479,7 +428,7 @@ function Grid:OnConfigurationLoad()
 				ShadowUF.db.profile.units.raid.grid.auras[aura].g = g
 				ShadowUF.db.profile.units.raid.grid.auras[aura].b = b
 				ShadowUF.db.profile.units.raid.grid.auras[aura].alpha = a
-				ShadowUF.Layout:ReloadAll("raid")
+				ShadowUF.Layout:Reload("raid")
 				return
 			elseif( key == "selfColor" ) then
 				ShadowUF.db.profile.units.raid.grid.auras[aura].selfColor = ShadowUF.db.profile.units.raid.grid.auras[aura].selfColor or {}
@@ -487,12 +436,12 @@ function Grid:OnConfigurationLoad()
 				ShadowUF.db.profile.units.raid.grid.auras[aura].selfColor.g = g
 				ShadowUF.db.profile.units.raid.grid.auras[aura].selfColor.b = b
 				ShadowUF.db.profile.units.raid.grid.auras[aura].selfColor.alpha = a
-				ShadowUF.Layout:ReloadAll("raid")
+				ShadowUF.Layout:Reload("raid")
 				return
 			end
 
 			ShadowUF.db.profile.units.raid.grid.auras[aura][key] = value
-			ShadowUF.Layout:ReloadAll("raid")
+			ShadowUF.Layout:Reload("raid")
 		end,
 		get = function(info)
 			local aura = auraMap[info[#(info) - 1]]
