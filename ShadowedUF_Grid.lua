@@ -128,7 +128,7 @@ function Grid:OnDefaultsSet()
 	
 	-- Hook into the coloring to make sure our color override is set if needed.
 	local UpdateColor = ShadowUF.modules.healthBar.UpdateColor
-	ShadowUF.modules.healthBar.UpdateColor = function(self, frame, ...)
+	ShadowUF.modules.healthBar.UpdateColor = function(self, frame)
 		-- Check if the unit is cursed, and we need to force it to color it by the debuff
 		if( frame.unitType == "raid" and frame.grid and frame.grid.activeCurse ) then
 			local color = DebuffTypeColor[frame.grid.activeCurse]
@@ -138,7 +138,7 @@ function Grid:OnDefaultsSet()
 			end
 		end
 		
-		return UpdateColor(self, frame, ...)
+		return UpdateColor(self, frame)
 	end
 end
 
@@ -222,20 +222,19 @@ end
 local auraList = {}
 local function scanAura(frame, unit, filter)
 	local index = 1
-	local auraConfig, indicator, name, rank, texture, count, debuffType, duration, endTime, caster, isStealable, priority, color
 	while( true ) do
-		name, rank, texture, count, debuffType, duration, endTime, caster, isStealable = UnitAura(unit, index, filter)
+		local name, rank, texture, count, debuffType, duration, endTime, caster, isStealable = UnitAura(unit, index, filter)
 		if( not name ) then break end
 			
 		-- Setup the auras in the indicators baserd on priority
 		name = ShadowUF.db.profile.units[frame.unitType].grid.linked[name] or name
-		auraConfig = ShadowUF.db.profile.units[frame.unitType].grid.auras[name]
-		indicator = auraConfig and frame.grid.indicators[auraConfig.indicator]
+		local auraConfig = ShadowUF.db.profile.units[frame.unitType].grid.auras[name]
+		local indicator = auraConfig and frame.grid.indicators[auraConfig.indicator]
 				
 		if( indicator and indicator.enabled and not auraConfig.missing and ( not auraConfig.player or caster == PlayerFrame.unit ) and not ShadowUF.db.profile.units[frame.unitType].grid.disabled[playerClass .. name] ) then
 			-- If the indicator is not restricted to the player only, then will give the player a slightly higher priority
-			priority = auraConfig.priority
-			color = auraConfig
+			local priority = auraConfig.priority
+			local color = auraConfig
 			if( not auraConfig.player and caster == PlayerFrame.unit ) then
 				priority = priority + 0.1
 				color = auraConfig.selfColor or auraConfig
@@ -557,7 +556,7 @@ function Grid:OnConfigurationLoad()
 						end
 					end
 					
-					ShadowUF.Layout:ReloadAll("raid")
+					ShadowUF.Layout:Reload("raid")
 				end,
 			},
 		},
@@ -578,7 +577,7 @@ function Grid:OnConfigurationLoad()
 					local key = info[#(info)]
 
 					ShadowUF.db.profile.units.raid.grid.indicators[indicator][key] = value
-					ShadowUF.Layout:ReloadAll("raid")
+					ShadowUF.Layout:Reload("raid")
 				end,
 				get = function(info)
 					local indicator = info[#(info) - 2]
@@ -607,7 +606,7 @@ function Grid:OnConfigurationLoad()
 							local indicator = info[#(info) - 2]
 							ShadowUF.db.profile.units.raid.grid.indicators[indicator].height = value
 							ShadowUF.db.profile.units.raid.grid.indicators[indicator].width = value
-							ShadowUF.Layout:ReloadAll("raid")
+							ShadowUF.Layout:Reload("raid")
 						end,
 						get = function(info)
 							local indicator = info[#(info) - 2]
@@ -673,7 +672,7 @@ function Grid:OnConfigurationLoad()
 								end
 							end
 							
-							ShadowUF.Layout:ReloadAll("raid")
+							ShadowUF.Layout:Reload("raid")
 						end,
 					},
 				},
@@ -728,7 +727,7 @@ function Grid:OnConfigurationLoad()
 						end
 					end
 					
-					ShadowUF.Layout:ReloadAll("raid")
+					ShadowUF.Layout:Reload("raid")
 				end,
 			},
 		},
@@ -872,7 +871,7 @@ function Grid:OnConfigurationLoad()
 											AceDialog.Status.ShadowedUF.children.grid.children.auras.status.groups.selected = tostring(gID or groupID)
 											AceRegistry:NotifyChange("ShadowedUF")
 											
-											ShadowUF.Layout:ReloadAll("raid")
+											ShadowUF.Layout:Reload("raid")
 										end,
 									},
 								},
@@ -957,7 +956,7 @@ function Grid:OnConfigurationLoad()
 									addLink.from = nil
 									addLink.to = nil
 									
-									ShadowUF.Layout:ReloadAll("raid")
+									ShadowUF.Layout:Reload("raid")
 								end,
 							},
 						},
@@ -1007,7 +1006,7 @@ function Grid:OnConfigurationLoad()
 
 			if( value == false ) then value = nil end
 			ShadowUF.db.profile.units.raid.grid.disabled[class .. aura] = value
-			ShadowUF.Layout:ReloadAll("raid")
+			ShadowUF.Layout:Reload("raid")
 		end,
 		get = function(info)
 			local aura = auraMap[info[#(info)]]
