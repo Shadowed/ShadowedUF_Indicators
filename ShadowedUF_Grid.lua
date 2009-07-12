@@ -8,14 +8,14 @@ local Grid = {}
 local AceDialog, AceRegistry, playerClass
 ShadowUF:RegisterModule(Grid, "grid")
 
-function Grid:OnDefaultsSet()
+function Grid:OnDefaultsSet()	
 	ShadowUF.defaults.profile.units.raid.grid = {enabled = true, cursed = false, disabled = {},
 		indicators = {
-			["tl"] = {enabled = true, name = ShadowUFLocals["Top Left"], anchorPoint = "ITL", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 8, y = 3},
-			["tr"] = {enabled = true, name = ShadowUFLocals["Top Right"], anchorPoint = "ITR", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -4, y = 4},
-			["bl"] = {enabled = true, name = ShadowUFLocals["Bottom Left"], anchorPoint = "IBL", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 8, y = 5},
-			["br"] = {enabled = true, name = ShadowUFLocals["Bottom Right"], anchorPoint = "IBR", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -4, y = 4},
-			["c"] = {enabled = true, name = ShadowUFLocals["Center"], anchorPoint = "IC", anchorTo = "$parent", height = 20, width = 20, alpha = 1.0, x = 0, y = 0},
+			["tl"] = {enabled = true, name = SL["Top Left"], anchorPoint = "TLI", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 4, y = -3},
+			["tr"] = {enabled = true, name = SL["Top Right"], anchorPoint = "TRI", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -3, y = 3},
+			["bl"] = {enabled = true, name = SL["Bottom Left"], anchorPoint = "BLI", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 4, y = 4},
+			["br"] = {enabled = true, name = SL["Bottom Right"], anchorPoint = "CRI", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -4, y = -4},
+			["c"] = {enabled = true, name = SL["Center"], anchorPoint = "C", anchorTo = "$parent", height = 20, width = 20, alpha = 1.0, x = 0, y = 0},
 		},
 		linked = {
 			-- Shadow Protection -> Prayer of Shadow Protection
@@ -143,6 +143,13 @@ function Grid:OnDefaultsSet()
 end
 
 function Grid:OnEnable(frame)
+	-- Upgrade if needed
+	for _, indicator in pairs(ShadowUF.db.profile.units.raid.grid.indicators) do
+		if( string.match(indicator.anchorPoint, "^I") ) then
+			indicator.anchorPoint = string.gsub(indicator.anchorPoint, "^I([A-Z][A-Z])", "%1I")
+		end
+	end
+
 	-- Not going to create the indicators we want here, will do that when we do the layout stuff
 	frame.grid = frame.grid or CreateFrame("Frame", nil, frame)
 	frame.grid.indicators = frame.grid.indicators or {}
@@ -589,7 +596,7 @@ function Grid:OnConfigurationLoad()
 						order = 1,
 						type = "select",
 						name = SL["Anchor point"],
-						values = {["IBR"] = SL["Inside Bottom Right"], ["IBL"] = SL["Inside Bottom Left"], ["ITR"] = SL["Inside Top Right"], ["ITL"] = SL["Inside Top Left"], ["ICL"] = SL["Inside Center Left"], ["IC"] = SL["Inside Center"], ["ICR"] = SL["Inside Center Right"]},
+						values = {["BRI"] = L["Inside Bottom Right"], ["BLI"] = L["Inside Bottom Left"], ["TRI"] = SL["Inside Top Right"], ["TLI"] = SL["Inside Top Left"], ["CLI"] = SL["Inside Center Left"], ["C"] = SL["Center"], ["CRI"] = SL["Inside Center Right"]},
 					},
 					sep = {
 						order = 2,
@@ -766,7 +773,7 @@ function Grid:OnConfigurationLoad()
 										width = "full",
 										set = function(info, value)
 											local id = string.format("%d", GetTime() + math.random(100))
-											ShadowUF.db.profile.units.raid.grid.indicators[id] = {enabled = true, name = value, anchorPoint = "IC", anchorTo = "$parent", height = 10, width = 10, alpha = 1.0, x = 0, y = 0}
+											ShadowUF.db.profile.units.raid.grid.indicators[id] = {enabled = true, name = value, anchorPoint = "C", anchorTo = "$parent", height = 10, width = 10, alpha = 1.0, x = 0, y = 0}
 											ShadowUF.Config.options.args.grid.args.indicators.args[id] = indicatorTable
 
 											AceDialog = AceDialog or LibStub("AceConfigDialog-3.0")
