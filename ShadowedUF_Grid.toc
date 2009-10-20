@@ -1,7 +1,7 @@
-## Interface: 30100
-## Title: ShadowedUF Grid
+## Interface: 30200
+## Title: ShadowedUF Indicators
 ## Notes: Adds Grid type of indicators to SUF raid frames
-## Author: Mayen/Selari
+## Author: Shadowed
 ## RequiredDeps: ShadowedUnitFrames
 
 localization.enUS.lua
