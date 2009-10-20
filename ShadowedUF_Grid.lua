@@ -120,6 +120,26 @@ function Grid:OnDefaultsSet()
 			[GetSpellInfo(63120)] = {indicator = "c", icon = true, group = L["Yogg-Saron"], priority = 100, r = 0, g = 0, b = 0},
 			-- Squeeze
 			[GetSpellInfo(64125)] = {indicator = "c", icon = true, group = L["Yogg-Saron"], priority = 75, r = 0, g = 0, b = 0},
+			-- Impale
+			[GetSpellInfo(66331)] = {indicator = "c", icon = true, group = L["Gormok the Impaler"], priority = 50, r = 0, g = 0, b = 0},
+			-- Snobolled
+			[GetSpellInfo(66406)] = {indicator = "c", icon = true, group = L["Gormok the Impaler"], priority = 25, r = 0, g = 0, b = 0},
+			-- Paralytic Toxin
+			[GetSpellInfo(66823)] = {indicator = "c", icon = true, group = L["Acidmaw & Dreadscale"], priority = 5, r = 0, g = 0, b = 0},
+			-- Burning Bile
+			[GetSpellInfo(66870)] = {indicator = "c", icon = true, group = L["Acidmaw & Dreadscale"], priority = 5, r = 0, g = 0, b = 0},
+			-- Incinerate Flesh
+			[GetSpellInfo(66237)] = {indicator = "c", icon = true, group = L["Lord Jaraxxus"], priority = 100, r = 0, g = 0, b = 0},
+			-- Legion Flames
+			[GetSpellInfo(66197)] = {indicator = "c", icon = true, group = L["Lord Jaraxxus"], priority = 75, r = 0, g = 0, b = 0},
+			-- Touch of Darkness
+			[GetSpellInfo(66001)] = {indicator = "c", icon = true, group = L["Twin Valkyrs"], priority = 75, r = 0, g = 0, b = 0},
+			-- Touch of Light
+			[GetSpellInfo(65950)] = {indicator = "c", icon = true, group = L["Twin Valkyrs"], priority = 75, r = 0, g = 0, b = 0},
+			-- Acid-Drenched Mandibles
+			[GetSpellInfo(65775)] = {indicator = "c", icon = true, group = L["Anub'arak"], priority = 75, r = 0, g = 0, b = 0},
+			-- Penetrating Cold
+			[GetSpellInfo(66013)] = {indicator = "c", icon = true, group = L["Anub'arak"], priority = 75, r = 0, g = 0, b = 0},
 		}
 	}
 
