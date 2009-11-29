@@ -34,9 +34,11 @@ end})
 function Indicators:OnDefaultsSet()
 	for _, unit in pairs(ShadowUF.units) do
 		if( not string.match(unit, "(%w+)target") ) then
-			ShadowUF.defaults.profile.units[unit].auraIndicators = {enabled = true}
+			ShadowUF.defaults.profile.units[unit].auraIndicators = {enabled = false}
 		end
 	end
+	
+	ShadowUF.defaults.profile.units.raid.auraIndicators.enabled = true
 
 	ShadowUF.defaults.profile.auraIndicators = {
 		disabled = {},
