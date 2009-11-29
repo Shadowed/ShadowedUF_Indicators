@@ -1,9 +1,0 @@
-## Interface: 30200
-## Title: ShadowedUF Indicators
-## Notes: Adds Grid type of indicators to SUF raid frames
-## Author: Shadowed
-## RequiredDeps: ShadowedUnitFrames
-
-localization.enUS.lua
-
-ShadowedUF_Grid.lua
