@@ -1,0 +1,9 @@
+## Interface: 30200
+## Title: ShadowedUF Aura Indicators
+## Notes: Adds aura indicators to unit frames
+## Author: Shadowed
+## RequiredDeps: ShadowedUnitFrames
+
+localization.enUS.lua
+
+ShadowedUF_Indicators.lua
