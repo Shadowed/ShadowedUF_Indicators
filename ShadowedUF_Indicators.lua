@@ -212,7 +212,7 @@ local function scanAura(frame, filter)
 		local indicator = auraConfig and frame.auraIndicators[auraConfig.indicator]
 		
 		if( indicator and indicator.enabled and 
-			not ShadowUF.db.profile.auraIndicators.disabled[playerClass][name] and not ShadowUF.db.profile.units[frame.unit].auraIndicators[auraConfig.group] and
+			not ShadowUF.db.profile.auraIndicators.disabled[playerClass][name] and not ShadowUF.db.profile.units[frame.unitType].auraIndicators[auraConfig.group] and
 			not auraConfig.missing and ( not auraConfig.player or caster == ShadowUF.playerUnit ) ) then
 			
 			-- If the indicator is not restricted to the player only, then will give the player a slightly higher priority
