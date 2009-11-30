@@ -131,6 +131,7 @@ function Indicators:OnEnable(frame)
 
 	-- Not going to create the indicators we want here, will do that when we do the layout stuff
 	frame.auraIndicators = frame.auraIndicators or CreateFrame("Frame", nil, frame)
+	frame.auraIndicators:Show()
 			
 	-- Of course, watch for auras
 	frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAuras")
@@ -139,6 +140,7 @@ end
 
 function Indicators:OnDisable(frame)
 	frame:UnregisterAll(self)
+	frame.auraIndicators:Hide()
 end
 
 local backdropTbl = {
@@ -435,7 +437,7 @@ function Indicators:OnConfigurationLoad()
 
 			-- So I don't have to load every aura to see if it only triggers if it's missing
 			if( key == "missing" ) then
-				ShadowUF.db.profile.auraIndicators.missing[aura] = value
+				ShadowUF.db.profile.auraIndicators.missing[aura] = value and true or nil
 			-- Changing the color
 			elseif( key == "color" ) then
 				Indicators.auraConfig[aura].r = value
@@ -782,7 +784,7 @@ function Indicators:OnConfigurationLoad()
 						type = "toggle",
 						name = L["Enable indicators"],
 						desc = function(info) return string.format(L["Unchecking this will completely disable the aura indicators mod for %s."], SL.units[info[3]]) end,
-						set = function(info, value) ShadowUF.db.profile.units[info[3]].auraIndicators.enabled = value end,
+						set = function(info, value) ShadowUF.db.profile.units[info[3]].auraIndicators.enabled = value; ShadowUF.Layout:Reload() end,
 						get = function(info) return ShadowUF.db.profile.units[info[3]].auraIndicators.enabled end,
 					},
 				},
