@@ -979,7 +979,7 @@ function Indicators:OnConfigurationLoad()
 											-- Shunt the user to the this groups page
 											AceDialog = AceDialog or LibStub("AceConfigDialog-3.0")
 											AceRegistry = AceRegistry or LibStub("AceConfigRegistry-3.0")
-											AceDialog.Status.ShadowedUF.children.Indicators.children.auras.status.groups.selected = tostring(gID or groupID)
+											AceDialog.Status.ShadowedUF.children.auraIndicators.children.auras.status.groups.selected = tostring(gID or groupID)
 											AceRegistry:NotifyChange("ShadowedUF")
 											
 											ShadowUF.Layout:Reload()
