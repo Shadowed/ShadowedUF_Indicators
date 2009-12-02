@@ -879,7 +879,7 @@ function Indicators:OnConfigurationLoad()
 
 											AceDialog = AceDialog or LibStub("AceConfigDialog-3.0")
 											AceRegistry = AceRegistry or LibStub("AceConfigRegistry-3.0")
-											AceDialog.Status.ShadowedUF.children.Indicators.children.indicators.status.groups.selected = id
+											AceDialog.Status.ShadowedUF.children.auraIndicators.children.indicators.status.groups.selected = id
 											AceRegistry:NotifyChange("ShadowedUF")
 										end,
 										get = function() return "" end,
