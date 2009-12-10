@@ -847,6 +847,7 @@ function Indicators:OnConfigurationLoad()
 		order = 4.5,
 		type = "group",
 		name = L["Aura indicators"],
+		desc = L["For configuring the aura indicators module."],
 		childGroups = "tab",
 		hidden = false,
 		args = {

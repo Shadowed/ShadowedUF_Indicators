@@ -30,6 +30,7 @@ SUFIndicatorsLocals = {
 	["Enable indicators"] = "Enable indicators",
 	["Enabled aura groups"] = "Enabled aura groups",
 	["Enabled for %s."] = "Enabled for %s.",
+	["For configuring the aura indicators module."] = "For configuring the aura indicators module.",
 	["Global"] = "Global",
 	["Global configurating will let you mass enable or disable aura groups for multiple units at once."] = "Global configurating will let you mass enable or disable aura groups for multiple units at once.",
 	["Help"] = "Help",
