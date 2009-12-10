@@ -844,7 +844,7 @@ function Indicators:OnConfigurationLoad()
 			
 	-- Actual tab view thing
 	ShadowUF.Config.options.args.auraIndicators = {
-		order = 1.50,
+		order = 4.5,
 		type = "group",
 		name = L["Aura indicators"],
 		childGroups = "tab",
