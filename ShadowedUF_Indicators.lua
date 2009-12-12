@@ -131,6 +131,7 @@ function Indicators:OnEnable(frame)
 
 	-- Not going to create the indicators we want here, will do that when we do the layout stuff
 	frame.auraIndicators = frame.auraIndicators or CreateFrame("Frame", nil, frame)
+	frame.auraIndicators:SetFrameLevel(4)
 	frame.auraIndicators:Show()
 			
 	-- Of course, watch for auras
@@ -1148,7 +1149,7 @@ function Indicators:OnConfigurationLoad()
 	local classTable = {
 		order = 1,
 		type = "group",
-		name = function(info) return SL.classes[info[#(info)]] end,
+		name = function(info) return LOCALIZED_CLASS_NAMES_MALE[info[#(info)]] end,
 		args = {},
 	}
 	
