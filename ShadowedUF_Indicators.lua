@@ -25,22 +25,27 @@ Indicators.auraConfig = setmetatable({}, {
 			end
 			
 			tbl[index] = func
+			tbl[index].group = tbl[index].group or L["Miscellaneous"]
 		end
 		
 		return tbl[index]
 end})
 
+function Indicators:OnLoad()
+	if( ShadowUF.db.profile.auraIndicators and ShadowUF.db.profile.auraIndicators.updated ) then return end
 
-function Indicators:OnDefaultsSet()
+	if( not ShadowUF.db.profile.units.auraIndicators ) then
+		ShadowUF.db.profile.units.raid.auraIndicators = {enabled = true}
+	end
+
 	for _, unit in pairs(ShadowUF.units) do
 		if( not string.match(unit, "(%w+)target") ) then
-			ShadowUF.defaults.profile.units[unit].auraIndicators = {enabled = false}
+			ShadowUF.db.profile.units[unit].auraIndicators = ShadowUF.db.profile.units[unit].auraIndicators or {enabled = false}
 		end
 	end
-	
-	ShadowUF.defaults.profile.units.raid.auraIndicators.enabled = true
 
-	ShadowUF.defaults.profile.auraIndicators = {
+	local defaults = {
+		updated = true,
 		disabled = {},
 		missing = {},
 		indicators = {
@@ -117,7 +122,25 @@ function Indicators:OnDefaultsSet()
 	}
 	
 	for classToken in pairs(RAID_CLASS_COLORS) do
-		ShadowUF.defaults.profile.auraIndicators.disabled[classToken] = {}
+		defaults.disabled[classToken] = {}
+	end
+	
+	if( not ShadowUF.db.profile.auraIndicators ) then
+		ShadowUF.db.profile.auraIndicators = defaults
+	else
+		ShadowUF.db.profile.auraIndicators.updated = true
+		
+		for key, data in pairs(defaults) do
+			if( not ShadowUF.db.profile.auraIndicators[key] ) then
+				ShadowUF.db.profile.auraIndicators[key] = defaults
+			else
+				for subKey, subData in pairs(data) do
+					if( not ShadowUF.db.profile.auraIndicators[key][subKey] ) then
+						ShadowUF.db.profile.auraIndicators[key][subKey] = subData
+					end
+				end
+			end
+		end
 	end
 end
 
@@ -938,7 +961,7 @@ function Indicators:OnConfigurationLoad()
 										func = function(info)
 											addAura.custom = string.trim(addAura.custom or "")
 											addAura.custom = addAura.custom ~= "" and addAura.custom or nil
-											if( addAura.group and addAura.group == "" ) then
+											if( addAura.group and string.trim(addAura.group) == "" ) then
 												addAura.group = L["Miscellaneous"]
 											end
 											
@@ -1249,3 +1272,5 @@ function Indicators:OnConfigurationLoad()
 	advanceTextTable.args.x.hidden = unlockRaidText
 	advanceTextTable.args.y.hidden = unlockRaidText
 end
+
+Indicators:OnLoad()
