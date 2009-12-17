@@ -133,9 +133,9 @@ function Indicators:OnLoad()
 		for key, data in pairs(defaults) do
 			if( not ShadowUF.db.profile.auraIndicators[key] ) then
 				ShadowUF.db.profile.auraIndicators[key] = defaults
-			else
+			elseif( type(data) == "table" ) then
 				for subKey, subData in pairs(data) do
-					if( not ShadowUF.db.profile.auraIndicators[key][subKey] ) then
+					if( ShadowUF.db.profile.auraIndicators[key][subKey] == nil ) then
 						ShadowUF.db.profile.auraIndicators[key][subKey] = subData
 					end
 				end
