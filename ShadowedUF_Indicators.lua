@@ -31,7 +31,7 @@ Indicators.auraConfig = setmetatable({}, {
 		return tbl[index]
 end})
 
-function Indicators:OnLoad()
+function Indicators:OnInitialize()
 	if( ShadowUF.db.profile.auraIndicators and ShadowUF.db.profile.auraIndicators.updated ) then return end
 
 	if( not ShadowUF.db.profile.units.auraIndicators ) then
@@ -1272,5 +1272,3 @@ function Indicators:OnConfigurationLoad()
 	advanceTextTable.args.x.hidden = unlockRaidText
 	advanceTextTable.args.y.hidden = unlockRaidText
 end
-
-Indicators:OnLoad()
