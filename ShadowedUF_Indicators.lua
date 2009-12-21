@@ -38,7 +38,7 @@ function Indicators:OnInitialize()
 		ShadowUF.db.profile.units.raid.auraIndicators = {enabled = true}
 	end
 
-	for _, unit in pairs(ShadowUF.units) do
+	for _, unit in pairs(ShadowUF.unitList) do
 		if( not string.match(unit, "(%w+)target") ) then
 			ShadowUF.db.profile.units[unit].auraIndicators = ShadowUF.db.profile.units[unit].auraIndicators or {enabled = false}
 		end
