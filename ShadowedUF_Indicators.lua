@@ -4,7 +4,7 @@
 
 local L = SUFIndicatorsLocals
 local SL = ShadowUFLocals
-local Indicators = {}
+local Indicators = select(2, ...)
 local AceDialog, AceRegistry
 local playerClass = select(2, UnitClass("player"))
 
@@ -143,6 +143,8 @@ function Indicators:OnInitialize()
 		end
 	end
 end
+
+Indicators.OnProfileChange = Indicators.OnInitialize
 
 function Indicators:OnEnable(frame)
 	-- Upgrade if needed
