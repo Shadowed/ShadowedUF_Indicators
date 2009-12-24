@@ -129,7 +129,7 @@ function Indicators:OnInitialize()
 	local function recursiveCheck(database, default)
 		for key, value in pairs(default) do
 			if( database[key] == nil ) then
-				database[key] = default
+				database[key] = default[key]
 			elseif( type(database[key]) == "table" ) then
 				recursiveCheck(database[key], value)
 			end
