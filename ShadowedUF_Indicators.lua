@@ -131,7 +131,7 @@ function Indicators:OnInitialize()
 			if( database[key] == nil ) then
 				database[key] = default[key]
 			elseif( type(database[key]) == "table" ) then
-				recursiveCheck(database[key], value)
+				recursiveCheck(database[key], default[key])
 			end
 		end
 	end
