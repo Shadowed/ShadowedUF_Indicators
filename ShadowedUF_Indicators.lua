@@ -125,22 +125,23 @@ function Indicators:OnInitialize()
 		defaults.disabled[classToken] = {}
 	end
 	
+	-- Recursion, you are my only friend
+	local function recursiveCheck(database, default)
+		for key, value in pairs(default) do
+			if( database[key] == nil ) then
+				database[key] = default
+			elseif( type(database[key]) == "table" ) then
+				recursiveCheck(database[key], value)
+			end
+		end
+	end
+	
 	if( not ShadowUF.db.profile.auraIndicators ) then
 		ShadowUF.db.profile.auraIndicators = defaults
 	else
 		ShadowUF.db.profile.auraIndicators.updated = true
 		
-		for key, data in pairs(defaults) do
-			if( not ShadowUF.db.profile.auraIndicators[key] ) then
-				ShadowUF.db.profile.auraIndicators[key] = defaults
-			elseif( type(data) == "table" ) then
-				for subKey, subData in pairs(data) do
-					if( ShadowUF.db.profile.auraIndicators[key][subKey] == nil ) then
-						ShadowUF.db.profile.auraIndicators[key][subKey] = subData
-					end
-				end
-			end
-		end
+		recursiveCheck(ShadowUF.db.profile.auraIndicators, defaults)
 	end
 end
 
