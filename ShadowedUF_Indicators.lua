@@ -33,6 +33,7 @@ end})
 
 function Indicators:OnInitialize()
 	if( ShadowUF.db.profile.auraIndicators and ShadowUF.db.profile.auraIndicators.updated ) then return end
+	ShadowUF.db.profile.auraIndicators.updated = true
 
 	if( not ShadowUF.db.profile.units.auraIndicators ) then
 		ShadowUF.db.profile.units.raid.auraIndicators = {enabled = true}
@@ -139,8 +140,11 @@ function Indicators:OnInitialize()
 	if( not ShadowUF.db.profile.auraIndicators ) then
 		ShadowUF.db.profile.auraIndicators = defaults
 	else
-		ShadowUF.db.profile.auraIndicators.updated = true
-		
+		for key, value in pairs(ShadowUF.db.profile.auraIndicators) do
+			if( key ~= "updated" and type(value) == "boolean" ) then
+				ShadowUF.db.profile.auraIndicators[key] = nil
+			end
+		end
 		recursiveCheck(ShadowUF.db.profile.auraIndicators, defaults)
 	end
 end
