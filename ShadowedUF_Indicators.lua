@@ -3,7 +3,7 @@
 ]]
 
 local L = SUFIndicatorsLocals
-local SL = ShadowUFLocals
+local SL = ShadowUF.L or ShadowUFLocals
 local Indicators = select(2, ...)
 local AceDialog, AceRegistry
 local playerClass = select(2, UnitClass("player"))
